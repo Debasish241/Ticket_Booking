@@ -38,28 +38,43 @@ func main() {
 		fmt.Println("Enter number of tickets:")
 		fmt.Scan(&userTickets)
 
-		if userTickets > remainingTickets {
-			fmt.Printf("We only have %v tickets,so you can't book %v tickets\n", remainingTickets, userTickets)
-			break
+		isValidName := len(firstName) >= 2 && len(lastName) >= 2
+		isValidEmail := strings.Contains(email, "@")
+		isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+
+		// isInValidCity:= city != "singapore"|| city != "London"
+
+		if isValidName && isValidEmail && isValidTicketNumber {
+			remainingTickets = remainingTickets - userTickets
+			bookings = append(bookings, firstName+" "+lastName)
+
+			fmt.Printf("Thank You %v %v for booking %v tickets. You will be received a confirmation email at %v\n", firstName, lastName, userTickets, email)
+			fmt.Printf("%v tickets remaining \n", remainingTickets)
+
+			firstNames := []string{}
+			for _, booking := range bookings {
+				var names = strings.Fields(booking)
+				firstNames = append(firstNames, names[0])
+			}
+			fmt.Printf("The first names of bookings are: %v\n", firstNames)
+
+			if remainingTickets == 0 {
+				fmt.Println("All tickets have been sold out")
+				break
+			}
+		} else {
+			if !isValidName {
+				fmt.Println("First name or last name is too short")
+			}
+			if !isValidEmail {
+				fmt.Println("Email address is not comntain @ sign ")
+			}
+			if !isValidTicketNumber {
+				fmt.Println("Number of tickets should be between 1 and 30")
+			}
+
 		}
 
-		remainingTickets = remainingTickets - userTickets
-		bookings = append(bookings, firstName+" "+lastName)
-
-		fmt.Printf("Thank You %v %v for booking %v tickets. You will be received a confirmation email at %v\n", firstName, lastName, userTickets, email)
-		fmt.Printf("%v tickets remaining \n", remainingTickets)
-
-		firstNames := []string{}
-		for _, booking := range bookings {
-			var names = strings.Fields(booking)
-			firstNames = append(firstNames, names[0])
-		}
-		fmt.Printf("The first names of bookings are: %v\n", firstNames)
-
-		if remainingTickets == 0 {
-			fmt.Println("All tickets have been sold out")
-			break
-		}
 	}
 
 }
