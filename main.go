@@ -77,4 +77,23 @@ func main() {
 
 	}
 
+	// city := "London"
+
+	// switch city {
+	// case "New York":
+	// 	//execute for new york booking system
+	// case "Singapore":
+	// 	//execute for singapore booking system
+	// case "Berlin", "London":
+	// 	//execute for berlin booking system
+	// case "Mexico City":
+	// 	//execute for mexico city booking system
+	// case "Hong Kong":
+	// 	//execute for hong kong booking system
+	// // case "London":
+	// //execute for london booking system
+	// default:
+	// 	fmt.Println("Invalid city")
+	// }
+
 }
