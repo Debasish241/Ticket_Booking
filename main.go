@@ -1,64 +1,35 @@
 package main
 
 import (
+	"booking_app/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
-func main() {
-	var conferenceName = "Go conference Mission"
-	const confirmationTickets = 50
-	var remainingTickets uint = 30
-	var bookings = []string{}
-	// making slice OR
-	// bookings := []string{}
+var conferenceName = "Go conference Mission"
 
-	fmt.Printf("conferenceTickets is %T , remainingTickets is %T , conferenceName is %T\n", confirmationTickets, remainingTickets, conferenceName)
+const confirmationTickets = 50
+
+var RemianingTickets uint = 30
+var bookings = make([]map[string]string, 0)
+
+func main() {
+	greetUser()
+
+	fmt.Printf("conferenceTickets is %T , RemianingTickets is %T , conferenceName is %T\n", confirmationTickets, RemianingTickets, conferenceName)
 
 	fmt.Println(conferenceName)
-	fmt.Printf("Welcome to our %v ticketing application\n", conferenceName)
-	fmt.Printf("We have total of  %v tickets and %v remained .\n", remainingTickets, confirmationTickets)
-	fmt.Println("Get Your tickets here to attend")
 
 	for {
-		var firstName string
-		var lastName string
-		var email string
-		var userTickets uint
-
-		fmt.Println("Enter your first name:")
-		fmt.Scan(&firstName)
-
-		fmt.Println("Enter your last name:")
-		fmt.Scan(&lastName)
-
-		fmt.Println("Enter your email:")
-		fmt.Scan(&email)
-
-		fmt.Println("Enter number of tickets:")
-		fmt.Scan(&userTickets)
-
-		isValidName := len(firstName) >= 2 && len(lastName) >= 2
-		isValidEmail := strings.Contains(email, "@")
-		isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
-
-		// isInValidCity:= city != "singapore"|| city != "London"
+		firstName, lastName, email, userTickets := getUserInput()
+		isValidName, isValidEmail, isValidTicketNumber := helper.ValidateUserInput(firstName, lastName, email, userTickets, RemianingTickets)
 
 		if isValidName && isValidEmail && isValidTicketNumber {
-			remainingTickets = remainingTickets - userTickets
-			bookings = append(bookings, firstName+" "+lastName)
-
-			fmt.Printf("Thank You %v %v for booking %v tickets. You will be received a confirmation email at %v\n", firstName, lastName, userTickets, email)
-			fmt.Printf("%v tickets remaining \n", remainingTickets)
-
-			firstNames := []string{}
-			for _, booking := range bookings {
-				var names = strings.Fields(booking)
-				firstNames = append(firstNames, names[0])
-			}
+			bookTicket(RemianingTickets, lastName, firstName, userTickets, email)
+			firstNames := getFirstNames(bookings)
 			fmt.Printf("The first names of bookings are: %v\n", firstNames)
 
-			if remainingTickets == 0 {
+			if RemianingTickets == 0 {
 				fmt.Println("All tickets have been sold out")
 				break
 			}
@@ -67,33 +38,78 @@ func main() {
 				fmt.Println("First name or last name is too short")
 			}
 			if !isValidEmail {
-				fmt.Println("Email address is not comntain @ sign ")
+				fmt.Println("Email address does not contain '@'")
 			}
 			if !isValidTicketNumber {
 				fmt.Println("Number of tickets should be between 1 and 30")
 			}
-
 		}
-
 	}
 
+	// Example of switch statement with commented lines
 	// city := "London"
-
 	// switch city {
 	// case "New York":
-	// 	//execute for new york booking system
+	// 	// execute for New York booking system
 	// case "Singapore":
-	// 	//execute for singapore booking system
+	// 	// execute for Singapore booking system
 	// case "Berlin", "London":
-	// 	//execute for berlin booking system
+	// 	// execute for Berlin and London booking system
 	// case "Mexico City":
-	// 	//execute for mexico city booking system
+	// 	// execute for Mexico City booking system
 	// case "Hong Kong":
-	// 	//execute for hong kong booking system
-	// // case "London":
-	// //execute for london booking system
+	// 	// execute for Hong Kong booking system
 	// default:
 	// 	fmt.Println("Invalid city")
 	// }
+}
 
+func greetUser() {
+	fmt.Printf("Welcome to our %v booking application\n", conferenceName)
+	fmt.Printf("We have total of  %v tickets and %v remained.\n", confirmationTickets, RemianingTickets)
+	fmt.Println("Get Your tickets here to attend")
+}
+
+func getFirstNames(bookings []map[string]string) []string {
+	firstNames := make([]string, len(bookings))
+	for i, booking := range bookings {
+		firstNames[i] = booking["firstname"]
+	}
+	return firstNames
+}
+
+func getUserInput() (string, string, string, uint) {
+	var firstName string
+	var lastName string
+	var email string
+	var userTickets uint
+
+	fmt.Println("Enter your first name:")
+	fmt.Scan(&firstName)
+
+	fmt.Println("Enter your last name:")
+	fmt.Scan(&lastName)
+
+	fmt.Println("Enter your email:")
+	fmt.Scan(&email)
+
+	fmt.Println("Enter number of tickets:")
+	fmt.Scan(&userTickets)
+
+	return firstName, lastName, email, userTickets
+}
+
+func bookTicket(remainingTickets uint, lastName string, firstName string, userTickets uint, email string) {
+	RemianingTickets = RemianingTickets - userTickets
+
+	userData := make(map[string]string)
+	userData["firstname"] = firstName
+	userData["lastname"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+	bookings = append(bookings, userData)
+	fmt.Printf("list of bookings %v\n", bookings)
+	fmt.Printf("Thank You %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
+	fmt.Printf("%v tickets remaining \n", RemianingTickets)
 }
